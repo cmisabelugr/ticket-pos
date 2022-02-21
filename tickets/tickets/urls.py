@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from pos.views import whoami, authlink
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('whoami/', whoami),
+    path('authpos/<str:link>/', authlink)
 ]

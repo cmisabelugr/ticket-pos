@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="form-signin text-center">
+    <a href="{% url 'home' %}"><img class="mb-4" src="{% static 'cartel_logo.png' %}" alt="Logo Evento"  height="300"></a>
+    <h1 class="h3 mb-3 font-weight-normal">Bienvenido a la barra de Mamma Mia!</h1>
+    
+    <a href="{% url 'register' %}"><button class="btn btn-lg btn-primary btn-block" type="submit">Registrarme</button></a>
+    <a href="{% url 'login' %}"><button class="btn btn-lg btn-primary btn-block" type="submit">Iniciar sesión</button></a>
+    
+  </div>
+
+{% endblock %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+
+
+{% endblock %}
