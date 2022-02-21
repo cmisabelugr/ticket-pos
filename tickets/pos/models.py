@@ -28,14 +28,24 @@ class Venue(models.Model):
 class Event(models.Model):
     name = models.TextField(blank=False, verbose_name="Event name")
     datetime = models.DateTimeField(blank=False, default=timezone.now)
-    venue = models.ForeignKey(to=Venue, on_delete=models.CASCADE)
+    venue = models.ForeignKey(to=Venue, blank=False, on_delete=models.CASCADE)
+    ticket_price = models.FloatField(verbose_name=_("Ticket price"), blank=False, default=0.0)
+    active = models.BooleanField(verbose_name=_("Enabled"), blank=False, default=True)
 
     @property
     def sold_tickets(self):
-        return self.ticket
+        orders = self.order_set.all()
+        result = 0
+        for o in orders:
+            result += o.ticket_set.count()
+        return result
+
+    @property
+    def left_tickets(self):
+        return self.venue.num_seats - self.sold_tickets
     
     def __str__(self):
-        pass
+        return "{} - {}".format(self.name, self.datetime)
 
     class Meta:
         verbose_name = 'Event'
@@ -54,7 +64,7 @@ class Order(models.Model):
 
     @property
     def num_tickets(self):
-        return self.tickets_set.count()
+        return self.ticket_set.count()
 
     def __str__(self):
         return "Order {} for {} for {}".format(self.id, self.event, self.customer_name)
@@ -71,7 +81,7 @@ class Seat(models.Model):
     column = models.SmallIntegerField(verbose_name=_("Column"), blank=False)
 
     def __str__(self):
-        return "Seat R{0:02d}C{1:02d} of {}".format(self.row, self.column, self.venue)
+        return "Seat R{0:02d}C{1:02d} of {2}".format(self.row, self.column, self.venue)
 
     class Meta:
         unique_together = ['venue', 'row', 'column']
@@ -83,6 +93,7 @@ class Ticket(models.Model):
     seat = models.ForeignKey(to=Seat, blank=True, default=None, on_delete=models.CASCADE)
     order = models.ForeignKey(to=Order, blank=True, default=None, on_delete=models.CASCADE)
     checkedin = models.BooleanField(default=False, blank=False)
+    paid = models.BooleanField(blank=False, default=False, verbose_name=_("Paid"))
 
 
     def __str__(self):
