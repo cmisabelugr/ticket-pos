@@ -2,9 +2,16 @@ from django.shortcuts import render
 from django.http.response import HttpResponse
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.db.models import Max
+
 
 from .models import *
 # Create your views here.
+
+def is_occupied_or_prereserved(seat, e):
+    # TODO: Comprobar también si no hay una prereserva y sacar un 0, 1 o 2. Porque puede estar reservado por el propio usuario. Tal vez queramos convertir esto a una puñetera annotation.
+    return seat.is_occupied(e)
+
 
 def whoami(req):
     print(req.user)
@@ -36,6 +43,59 @@ def pos_home(req):
 
 @login_required
 def pos_seat_selection(req, id):
+    e = Event.objects.filter(id=id).first()
+
+    seats = e.venue.seat_set.order_by("row").all()
+    num_columns = e.venue.seat_set.aggregate(Max("column"))['column__max']
+    num_rows = e.venue.seat_set.aggregate(Max("row"))['row__max']
+
+    seat_map = []
+
+    for row in range(1,num_rows+1):
+        row_seats = e.venue.seat_set.filter(row = row).all()
+        odd = []
+        even = []
+        for s in row_seats:
+            if s.column %2==0:
+                even.append(s)
+            else: 
+                odd.append(s)
+        odd.sort(key=lambda x: x.column, reverse=True)
+        even.sort(key=lambda x: x.column)
+        seat_map.append([odd, even])
+
+    max_odd = max([len(x[0]) for x in seat_map])
+    max_even = max([len(x[1]) for x in seat_map])
+
+    seat_map_render = []
+
+    for row in seat_map:
+        render_row = []
+        for i in range(max_odd-len(row[0])):
+            render_row.append("E")
+        for s in row[0]:
+            s.status = is_occupied_or_prereserved(s, e)
+            render_row.append(s)
+        render_row.append("A")
+        for s in row[1]:
+            s.status = is_occupied_or_prereserved(s, e)
+            render_row.append(s)
+        for i in range(max_even-len(row[1])):
+            render_row.append("E")
+        seat_map_render.append(render_row)
+
+    #print(seat_map_render)
+
+
+    context = {
+        'event': e,
+        'username': req.user.first_name,
+        'num_columns' : num_columns,
+        'num_rows' : num_rows,
+        'seat_map' : seat_map_render
+    }
+
+    return render(req, "seat_map.html", context=context)
     pass
 
 @login_required

@@ -83,6 +83,13 @@ class Seat(models.Model):
     def __str__(self):
         return "Seat R{0:02d}C{1:02d} of {2}".format(self.row, self.column, self.venue)
 
+    @property
+    def local_code(self):
+        return "R{0:02d}C{1:02d}".format(self.row, self.column)
+
+    def is_occupied(self, e):
+        return self.ticket_set.filter(order__event=e).exists()
+
     class Meta:
         unique_together = ['venue', 'row', 'column']
         verbose_name = _('Seat')
@@ -113,3 +120,10 @@ class AuthLink(models.Model):
 
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     text = models.TextField(verbose_name=_("AuthLink Code"), blank=False, default=get_random_string, unique=True)
+
+class PreReservation(models.Model):
+    seat = models.ForeignKey(to=Seat, blank=False, verbose_name=_("Prereserved seat"), on_delete=models.CASCADE)
+    event = models.ForeignKey(to=Event, blank=False, verbose_name=_("Prereserved event"), on_delete=models.CASCADE)
+    user = models.ForeignKey(to=User, blank=False, verbose_name=_("Prereserved POS"), on_delete=models.CASCADE)
+    datetime = models.DateTimeField(verbose_name=_("Prereservation time"), auto_now_add=True)
+    session_id = models.TextField(verbose_name=_("POS Session"), blank=True)
