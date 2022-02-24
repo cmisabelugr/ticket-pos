@@ -16,7 +16,7 @@ Including another URLconf
 from os import name
 from django.contrib import admin
 from django.urls import path
-from pos.views import whoami, authlink, pos_home, pos_seat_selection
+from pos.views import pos_order_form, whoami, authlink, pos_home, pos_seat_selection
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +24,5 @@ urlpatterns = [
     path('authpos/<str:link>/', authlink),
     path('pos/home/', pos_home, name="pos_home"),
     path('pos/seat_selection/<int:id>/', pos_seat_selection, name="seat_selection"),
+    path('pos/order_form/<int:event_id>/', pos_order_form, name="order_form"),
 ]

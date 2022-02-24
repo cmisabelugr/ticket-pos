@@ -127,3 +127,6 @@ class PreReservation(models.Model):
     user = models.ForeignKey(to=User, blank=False, verbose_name=_("Prereserved POS"), on_delete=models.CASCADE)
     datetime = models.DateTimeField(verbose_name=_("Prereservation time"), auto_now_add=True)
     session_id = models.TextField(verbose_name=_("POS Session"), blank=True)
+
+    class Meta:
+        unique_together = ['seat', 'event']

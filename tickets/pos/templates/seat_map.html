@@ -5,7 +5,7 @@
 {% block content %}
 <div class="form-signin text-center">
     <h1 class="h3 mb-3 font-weight-normal">Venta de entradas</h1>
-<table class="tg">
+<table class="tg" onClick="seatClick(event)">
 <thead>
   <tr>
     <th class="tg-baqh" colspan="{{ num_columns|add:"1" }}">Escenario</th>
@@ -24,21 +24,24 @@
         
         {% else %}
         <td class="tg-0lax">
-        {% if seat.status %}
-        <img id='{{seat.local_code}}' src='{% static 'img/booked.png' %}' /></td>
-        {% else %}
-        <img id='{{seat.local_code}}' src='{% static 'img/none.png' %}' /></td>
-        {% endif %}
+            {% if seat.status == "Blocked" %}
+            <img id='{{seat.local_code}}' src='{% static 'img/booked.png' %}' /></td>
+            {% elif seat.status == "Free"%}
+            <img id='{{seat.local_code}}' src='{% static 'img/none.png' %}' /></td>
+            {% elif seat.status == "Yours"%}
+            <img id='{{seat.local_code}}' src='{% static 'img/selected.png' %}' /></td>
+            {% endif %}
         {% endif %}
     {% endfor %}
 </tr>
 
 {% endfor %}
 
+<script id="js-data" type="application/json">{"event_id": "{{event.id}}"}</script>
 
 </tbody>
 </table>
-    
+    <a href="{% url 'order_form' event.id %}"><button class="btn btn-lg btn-primary btn-block" type="submit">Continuar</button></a>
     </div>
 
 {% endblock %}
@@ -52,5 +55,9 @@
 }
 </style>
 
+{% endblock %}
+
+{% block customjs %}
+<script src="{% static 'js/seat_map.js' %}"></script>
 
 {% endblock %}

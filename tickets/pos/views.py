@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.http.response import HttpResponse
 from django.contrib.auth import login
@@ -11,6 +12,31 @@ from .models import *
 def is_occupied_or_prereserved(seat, e):
     # TODO: Comprobar también si no hay una prereserva y sacar un 0, 1 o 2. Porque puede estar reservado por el propio usuario. Tal vez queramos convertir esto a una puñetera annotation.
     return seat.is_occupied(e)
+
+def is_prerreserved(seat, event, req):
+        p = PreReservation.objects.filter(event =event, seat = seat)
+        if p.exists():
+            p1 = p.first()
+            expiry = (p1.datetime + timedelta(minutes=5)).timestamp()
+            now = timezone.now().timestamp()
+            if expiry < now:
+                p1.delete()
+                if seat.is_occupied(event):
+                    return "Blocked"
+                else:
+                    return "Free"
+            if p1.user == req.user:
+                if p1.session_id == req.session.session_key:
+                    return "Yours"
+                else:
+                    return "Blocked"
+            else:
+                return "Blocked"
+        else:
+            if seat.is_occupied(event):
+                return "Blocked"
+            else:
+                return "Free"
 
 
 def whoami(req):
@@ -74,17 +100,19 @@ def pos_seat_selection(req, id):
         for i in range(max_odd-len(row[0])):
             render_row.append("E")
         for s in row[0]:
-            s.status = is_occupied_or_prereserved(s, e)
+            s.status = is_prerreserved(s, e, req)
             render_row.append(s)
         render_row.append("A")
         for s in row[1]:
-            s.status = is_occupied_or_prereserved(s, e)
+            s.status = is_prerreserved(s, e, req)
             render_row.append(s)
         for i in range(max_even-len(row[1])):
             render_row.append("E")
         seat_map_render.append(render_row)
 
     #print(seat_map_render)
+    
+    print(req.session.session_key)
 
 
     context = {
@@ -99,7 +127,26 @@ def pos_seat_selection(req, id):
     pass
 
 @login_required
-def pos_order_info(req):
+def pos_order_form(req, event_id):
+    e = Event.objects.filter(id=event_id).first()
+    p = PreReservation.objects.filter(event = e, user = req.user, session_id = req.session.session_key).all()
+    seats = [x.seat for x in p ]
+    for s in seats:
+        q = s.ticket_set.filter(order__event=e)
+        if q.exists():
+            s.is_assigned = q.first().id
+        else:
+            s.is_assigned = False
+        
+    
+
+    context = {
+        'event': e,
+        'username': req.user.first_name,
+        'seats' : seats,
+    }
+
+    return render(req, "order_form.html", context=context)
     pass
 
 
