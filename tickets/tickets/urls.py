@@ -16,7 +16,7 @@ Including another URLconf
 from os import name
 from django.contrib import admin
 from django.urls import path
-from pos.views import door_accomodate_checkin, door_accomodate_map, door_accomodate_scan, door_func_selection, door_intro, door_ticket_verify, door_ticket_verify_api, office_pay_ticket, office_pay_ticket_db, office_scan_ticket, pos_activate_tickets, pos_api_activate, pos_cancel_list, pos_order_cancel, pos_order_form, pos_order_info, pos_order_pay, pos_users_list, pos_users_new, ticket_detail, ticket_pdf_single, whoami, authlink, pos_home, pos_seat_selection
+from pos.views import door_accomodate_checkin, door_accomodate_map, door_accomodate_scan, door_func_selection, door_intro, door_ticket_verify, door_ticket_verify_api, office_pay_ticket, office_pay_ticket_db, office_scan_ticket, pos_activate_tickets, pos_api_activate, pos_cancel_list, pos_order_cancel, pos_order_form, pos_order_info, pos_order_pay, pos_users_list, pos_users_new, ticket_detail, ticket_pdf_single, whoami, authlink, pos_home, pos_seat_selection, home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -48,6 +48,7 @@ urlpatterns = [
     path('door/accomodate_scan/<int:event_id>/', door_accomodate_scan, name="accomodate_scan"),
     path('door/accomodate_map/<int:event_id>/', door_accomodate_map, name="accomodate_map"),
     path('door/accomodate_check/<int:event_id>/', door_accomodate_checkin, name="accomodate_check"),
+    path('', home, name="basic_home"),
 
 
 

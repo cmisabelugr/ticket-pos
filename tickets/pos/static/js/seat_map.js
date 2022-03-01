@@ -3,7 +3,7 @@ const roomName = JSON.parse(document.getElementById('js-data').textContent).even
 console.log(roomName)
 
 const chatSocket = new WebSocket(
-    'ws://'
+    'wss://'
     + window.location.host
     + '/ws/seat_selection/'
     + roomName

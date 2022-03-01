@@ -17,6 +17,9 @@ from .models import *
 from .forms import OrderForm, PosUserForm
 # Create your views here.
 
+def home(req):
+    return HttpResponse("Sistema de venta de entradas. No hay página pública")
+
 def is_occupied_or_prereserved(seat, e):
     # TODO: Comprobar también si no hay una prereserva y sacar un 0, 1 o 2. Porque puede estar reservado por el propio usuario. Tal vez queramos convertir esto a una puñetera annotation.
     return seat.is_occupied(e)
