@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="form-signin text-center">
+    <h1 class="h3 mb-3 font-weight-normal">Gestión de taquilla</h1>
+    
+    <p> Elige la herramienta a utilizar </p>
+    <div class="list-group">
+      <a href="{% url 'door_ticket_verify' e.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+    Verificación de entradas 
+    </a>
+    <a href="{% url 'office_scan' e.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+    Taquilla 
+    </a>
+    <a href="{% url 'accomodate_scan' e.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+    Acomodación 
+    </a>
+    </div>
+
+  </div>
+
+{% endblock %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+
+
+{% endblock %}

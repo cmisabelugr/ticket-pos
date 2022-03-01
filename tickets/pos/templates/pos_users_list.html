@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="form-signin text-center">
+    <h1 class="h3 mb-3 font-weight-normal">Gestión de puntos de venta</h1>
+    <a href="{% url 'staff_pos_new' %}"><button class="btn btn-lg btn-primary btn-block" type="submit">Nuevo Punto de Venta</button></a>
+    <p>  </p>
+    <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Usuario</th>
+      <th scope="col">Nombre</th>
+      <th scope="col">Num entradas</th>
+      <th scope="col">Reservadas/Vendidas</th>
+      <th scope="col">Deuda</th>
+      <th scope="col">AuthLink</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for u in users %}
+    <tr>
+      <th scope="row">{{forloop.counter}}</th>
+      <td>{{u.username}}</td>
+      <td>{{u.first_name}}</td>
+      <td>{{u.tickets_sold}}</td>
+      <td>{{u.reserved}}/{{u.paid_tickets}}</td>
+      <td>{{u.debt}}€</td>
+      <td><a href="{% url 'pos_auth' u.authlink.text %}">Link</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+  </div>
+
+{% endblock %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+
+
+{% endblock %}
+
+{% block customjs %}
+
+<script>
+
+function cancelOrder(customerName, deleteUrl){
+    
+    document.getElementById('deleteName').textContent = customerName;
+    document.getElementById('deleteLink').href = deleteUrl;
+    $('#deleteModal').modal('show');
+}
+
+function payOrder(customerName, payUrl, orderPrice){
+    
+    document.getElementById('payName').textContent = customerName;
+    document.getElementById('payPrice').textContent = orderPrice;
+    document.getElementById('payLink').href = payUrl;
+    $('#payModal').modal('show');
+}
+
+</script>
+
+{% endblock %}

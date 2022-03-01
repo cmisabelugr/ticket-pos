@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="form-signin text-center">
+    <h1 class="h2 mb-3 font-weight-normal">Gestión de taquilla</h1>
+    
+    <h2 class="h3 mb-3 font-weight-normal">Pagar entrada</h2>
+    <p> Entradas para {{e}} </p>
+    <p>Pedido de {{t.order.customer_name}} ({{t.order.customer_email}})</p>
+    <p>{{num_seats}} asiento{{num_seats | pluralize}} vendidos{{num_seats | pluralize}}</p>
+    <div class="list-group">
+    <p>Ticket {{t.id}} - Asiento {{t.seat.local_code}}</p>
+    </div>
+    <a href="{% url 'office_pay_db' e.id t.qr_text %}"><button class="btn btn-lg btn-primary btn-block" type="submit">Marcar entrada como pagada</button></a>
+    <a href="{% url 'office_scan' e.id %}"><button class="btn btn-lg btn-secondary btn-block" type="submit">Volver</button></a>
+  </div>
+
+
+
+{% endblock %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+
+
+{% endblock %}
+
+{% block customjs %}
+
+
+{% endblock %}

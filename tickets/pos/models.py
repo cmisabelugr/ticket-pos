@@ -1,6 +1,7 @@
 import code
 from pyexpat import model
 import random, string
+from xmlrpc.client import Boolean
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
@@ -97,8 +98,8 @@ class Seat(models.Model):
 class Ticket(models.Model):
 
     qr_text = models.TextField(verbose_name=_("QR Text label"), blank=False, default=get_random_string, unique=True)
-    seat = models.ForeignKey(to=Seat, blank=True, default=None, on_delete=models.CASCADE)
-    order = models.ForeignKey(to=Order, blank=True, default=None, on_delete=models.CASCADE)
+    seat = models.ForeignKey(to=Seat, blank=True, default=None, null=True, on_delete=models.CASCADE)
+    order = models.ForeignKey(to=Order, blank=True, default=None, null=True, on_delete=models.CASCADE)
     checkedin = models.BooleanField(default=False, blank=False)
     paid = models.BooleanField(blank=False, default=False, verbose_name=_("Paid"))
 
@@ -108,6 +109,10 @@ class Ticket(models.Model):
             return "Ticket {} for {}".format(self.id, self.order)
         else:
             return "Ticket {}".format(self.id)
+    
+    @property
+    def is_assigned(self) -> Boolean:
+        return self.order and self.seat
 
     class Meta:
         verbose_name = _('Ticket')

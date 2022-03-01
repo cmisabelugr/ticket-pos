@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="form-signin text-center">
+    <h1 class="h2 mb-3 font-weight-normal">Venta de entradas</h1>
+    
+    <h2 class="h3 mb-3 font-weight-normal">Resumen del pedido</h2>
+    <p> Entradas para {{event}} </p>
+    <p>Pedido de {{order.customer_name}} ({{order.customer_email}})</p>
+    <p>{{num_seats}} asiento{{num_seats | pluralize}} vendidos{{num_seats | pluralize}}</p>
+    <div class="list-group">
+    {% for s in ticket_set %}
+<a href="#" id="{{s.local_code}}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+    Ticket {{s.id}} - Asiento {{s.seat.local_code}}
+    </a>
+    {% endfor %}
+    </div>
+    {% if order.paid%}
+    <h2>{{username}}, recuerda que tienes que cobrar {{total_price}} euros </h2>
+    {% else %}
+    <h2>{{username}}, recuerda a {{order.customer_name}} que tendrá que pagar {{total_price}} euros a la entrada del espectáculo </h2>
+    {% endif %}
+    <a href="{% url 'pos_home' %}"><button class="btn btn-lg btn-primary btn-block" type="submit">Volver</button></a>
+  </div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="scanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Escanea una entrada</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="width=100%">
+        <video id="scanner-area"></video>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Escanea una entrada</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="width=100%">
+        Este ticket ya se ha utilizado
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script id="js-data" type="application/json">{"api_url": "{% url 'api_activate' order.id%}", "csrf" : "{{ csrf_token }}"}</script>
+
+{% endblock %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+
+
+{% endblock %}
+
+{% block customjs %}
+<script src="{% static 'js/qr-scanner.umd.min.js' %}"></script>
+<script src="{% static 'js/axios.min.js' %}"></script>
+
+<script src="{% static 'js/order_scan.js' %}"></script>
+
+{% endblock %}

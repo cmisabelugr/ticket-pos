@@ -3,57 +3,47 @@
 
 {% block content %}
 <div class="form-signin text-center">
-    <h1 class="h3 mb-3 font-weight-normal">Venta de entradas</h1>
+    <h1 class="h2 mb-3 font-weight-normal">Venta de entradas</h1>
 
     <h2 class="h3 mb-3 font-weight-normal">Datos de pedido</h2>
+    <form method="POST" action="{% url 'order_form' event.id %}" >
+    {% if error %}
+    <div class="invalid-feedback" style="display:block">Error en los datos. Revisa el formulario</div>
+    {% endif %}
+    <label for="inputCustomerName" class="sr-only">Nombre del comprador</label>
+    <input type="text" name="{{form.customer_name.html_name}}" id="inputCustomerName" class="form-control" {% if form.customer_name.value %}value="{{form.customer_name.value}}" {% endif %} placeholder="Nombre del comprador" required autofocus>
+    
+    <label for="inputEmail" class="sr-only">Email del comprador</label>
+    <input type="email" name="{{form.customer_email.html_name}}" id="inputEmail" class="form-control" {% if form.customer_email.value %} value="{{form.customer_email.value}}" {% endif %} placeholder="Email del comprador" required autofocus>
+    <label for="inputPhone" class="sr-only">Teléfono de contacto (opcional)</label>
+    <input type="text" name="{{form.customer_phone.html_name}}" id="inputPhone" class="form-control" {% if form.customer_phone.value %} value="{{form.customer_phone.value}}" {% endif %} placeholder="Número de teléfono">
+
+    <label for="inputPaid">¿Pedido pagado?</label>
+    <input type="checkbox" name="{{form.paid.html_name}}" id="inputPaid" class="form-control" {% if form.paid.value %} checked {% endif %}>
+
+    {% if user.is_staff %}
+    <label for="inputFree">¿Pedido gratuito?</label>
+    <input type="checkbox" name="{{form.free_order.html_name}}" id="inputFree" {% if form.free_order.value %} checked {% endif %} class="form-control">
+    {% endif %}
+    {% csrf_token %}
+
+    <h2 class="h3 mb-3 font-weight-normal">{{num_seats}} asiento{{num_seats | pluralize}} seleccionado{{num_seats | pluralize}}</h2>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Continuar</button>
+  </form>
+    
     <h2 class="h3 mb-3 font-weight-normal">Asignación de entradas</h2>
     <div class="list-group">
     {% for s in seats %}
 <a href="#" id="{{s.local_code}}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
     Asiento {{s.local_code}} 
-    {% if s.is_assigned %}
-    {% else %}
-    <span class="badge badge-primary badge-pill" onClick="showScanner('{{s.local_code}}');">Asignar ticket</span>
-    {% endif %}
     </a>
     {% endfor %}
   </div>
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#scanModal">
-  Launch demo modal
-</button>
-
-<!-- Modal -->
-<div class="modal fade" id="scanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Escanea una entrada</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <video id="scanner-area" style="width=100%"></video>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock %}
 
 {% block customcss %}
 <link rel="stylesheet" href="{% static 'login.css' %}">
 
-
-{% endblock %}
-
-{% block customjs %}
-<script src="{% static 'js/qr-scanner.umd.min.js' %}"></script>
-
-<script src="{% static 'js/order_scan.js' %}"></script>
 
 {% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+{% load postags %}
+
+{% block content %}
+<div class="form-signin text-center">
+    <h1 class="h2 mb-3 font-weight-normal">Gestión de taquilla</h1>
+    
+    <h2 class="h3 mb-3 font-weight-normal">Acomodación</h2>
+    <p>Evento: {{e}}</p>
+    <div class="list-group">
+    {% for s in seats %}
+<li  class="list-group-item">
+    Asiento {{s.local_code}} 
+    </li>
+    {% endfor %}
+  </div>
+  <form action={% url 'accomodate_check' e.id %} method=POST id="accomodateForm">
+    <input type="hidden" id="tickets_scanned" name="tickets" value="{{qr_tickets}}">
+    {% csrf_token %}
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Check-In</button>
+    </form>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-baqh" colspan="{{ num_columns|add:"1" }}">Escenario</th>
+  </tr>
+</thead>
+<tbody>
+
+{% for row in seat_map %}
+<tr>
+    {% for seat in row %}
+        {% if seat == "E" %}
+        <td class="tg-0lax"></td>
+        {% elif seat == "A" and forloop.parentloop.first %}
+        <td class="tg-0lax" rowspan="{{ num_rows }}">Pasillo</td>
+        {% elif seat == "A" %}
+        
+        {% else %}
+        <td class="tg-0lax">
+            {% if seat.status == "Blocked" %}
+            <img id='{{seat.local_code}}' src='{% static 'img/booked.png' %}' /></td>
+            {% elif seat.status == "Free"%}
+            <img id='{{seat.local_code}}' src='{% static 'img/none.png' %}' /></td>
+            {% elif seat.status == "Yours"%}
+            <img id='{{seat.local_code}}' src='{% static 'img/selected.png' %}' /></td>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</tr>
+
+{% endfor %}
+
+<script id="js-data" type="application/json">{"event_id": "{{event.id}}"}</script>
+
+</tbody>
+</table>
+    </div>
+
+{% endblock %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+<style>
+.tg img{
+    width : 1.5em;
+    height : 1.5em;
+}
+</style>
+
+{% endblock %}
+
+{% block customjs %}
+
+{% endblock %}

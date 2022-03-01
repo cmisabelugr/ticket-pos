@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+{% load postags %}
+
+{% block content %}
+<div class="form-signin text-center">
+    <h1 class="h3 mb-3 font-weight-normal">Entrada para {{ticket.order.event}}</h1>
+    <p>Pedido a nombre de {{ticket.order.customer_name}}. Asiento {{ticket.seat.local_code}}</p>
+    <p>En verde tienes la ubicación de tu entrada. En gris las del resto de tu pedido.</p>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-baqh" colspan="{{ num_columns|add:"1" }}">Escenario</th>
+  </tr>
+</thead>
+<tbody>
+
+{% for row in seat_map %}
+<tr>
+    {% for seat in row %}
+        {% if seat == "E" %}
+        <td class="tg-0lax"></td>
+        {% elif seat == "A" and forloop.parentloop.first %}
+        <td class="tg-0lax" rowspan="{{ num_rows }}">Pasillo</td>
+        {% elif seat == "A" %}
+        
+        {% else %}
+        <td class="tg-0lax">
+            {% if seat.status == "Blocked" %}
+            <img id='{{seat.local_code}}' src='{% static 'img/booked.png' %}' /></td>
+            {% elif seat.status == "Free"%}
+            <img id='{{seat.local_code}}' src='{% static 'img/none.png' %}' /></td>
+            {% elif seat.status == "Yours"%}
+            <img id='{{seat.local_code}}' src='{% static 'img/selected.png' %}' /></td>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</tr>
+
+{% endfor %}
+
+<script id="js-data" type="application/json">{"event_id": "{{event.id}}"}</script>
+
+</tbody>
+</table>
+<br>
+    <embed src="{% url 'ticket_pdf_single' ticket.qr_text %}"></embed>
+    </div>
+
+{% endblock %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+<style>
+.tg img{
+    width : 1.5em;
+    height : 1.5em;
+}
+</style>
+
+{% endblock %}
+
+{% block customjs %}
+
+{% endblock %}

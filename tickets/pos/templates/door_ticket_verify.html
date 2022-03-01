@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="form-signin text-center">
+    <h1 class="h2 mb-3 font-weight-normal">Gestión de taquilla</h1>
+    
+    <h2 class="h3 mb-3 font-weight-normal">Verificación de entradas</h2>
+    <p>Evento: {{e}}</p>
+    <div id="mainAlert" class="alert alert-primary" role="alert">
+  Escanea tickets para comprobar su validez
+    </div>
+    <video id="scanner-area"></video>
+    <input type="text" id="scanner" placeholder="scanner">
+
+  </div>
+
+
+
+<script id="js-data" type="application/json">{"api_url": "{% url 'door_ticket_api' e.id%}", "csrf" : "{{ csrf_token }}"}</script>
+
+{% endblock %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+
+
+{% endblock %}
+
+{% block customjs %}
+<script src="{% static 'js/qr-scanner.umd.min.js' %}"></script>
+<script src="{% static 'js/axios.min.js' %}"></script>
+
+<script src="{% static 'js/ticket_verify.js' %}"></script>
+
+{% endblock %}

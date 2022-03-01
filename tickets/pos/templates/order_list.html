@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="form-signin text-center">
+    <h1 class="h3 mb-3 font-weight-normal">Venta de entradas</h1>
+
+    <p> Hola {{username}}. Estos son tus pedidos.<p>
+    
+    <p>  </p>
+    <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Evento</th>
+      <th scope="col">Cliente</th>
+      <th scope="col">Num entradas</th>
+      <th scope="col">Pagado</th>
+      <th scope="col">Cancelar</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for o in orders %}
+    <tr>
+      <th scope="row">{{forloop.counter}}</th>
+      <td>{{o.event}}</td>
+      <td>{{o.customer_name}}</td>
+      <td>{{o.ticket_set.count}}</td>
+      <td>{% if o.paid %}✔{% else %}<button type="button" onClick='payOrder("{{o.customer_name}}","{% url 'pay_order' o.id %}","{{o.total_price}}")' class="btn btn-primary">Pagar</button>{% endif %}</td>
+      <td>{% if o.paid %}{% else %}<button type="button" onClick='cancelOrder("{{o.customer_name}}","{% url 'cancel_order' o.id %}")' class="btn btn-danger">Cancelar</button>{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="{% url 'pos_home' %}"><button class="btn btn-lg btn-primary btn-block" type="submit">Volver</button></a>
+  </div>
+
+  <!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Escanea una entrada</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="width=100%">
+        Seguro que quieres borrar el pedido de <span id="deleteName"></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <a id="deleteLink" href=""><button type="button" class="btn btn-danger">Cancelar pedido</button></a>
+      </div>
+    </div>
+  </div>
+</div>
+      
+
+<div class="modal fade" id="payModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Escanea una entrada</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="width=100%">
+        Seguro que quieres marcar el pedido de <span id="payName"></span>. Serán <span id="payPrice"></span> euros.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <a id="payLink" href=""><button type="button" class="btn btn-danger">Pagar pedido</button></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+
+
+{% endblock %}
+
+{% block customjs %}
+
+<script>
+
+function cancelOrder(customerName, deleteUrl){
+    
+    document.getElementById('deleteName').textContent = customerName;
+    document.getElementById('deleteLink').href = deleteUrl;
+    $('#deleteModal').modal('show');
+}
+
+function payOrder(customerName, payUrl, orderPrice){
+    
+    document.getElementById('payName').textContent = customerName;
+    document.getElementById('payPrice').textContent = orderPrice;
+    document.getElementById('payLink').href = payUrl;
+    $('#payModal').modal('show');
+}
+
+</script>
+
+{% endblock %}

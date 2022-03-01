@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="form-signin text-center">
+    <h1 class="h3 mb-3 font-weight-normal">Gestión de puntos de venta</h1>
+    <form method="POST" action="{% url 'staff_pos_new'%}" >
+    {% if error %}
+    <div class="invalid-feedback" style="display:block">Error en los datos. Revisa el formulario</div>
+    {% endif %}
+    <label for="inputCustomerName" class="sr-only">Nombre del punto de venta</label>
+    <input type="text" name="{{form.first_name.html_name}}" id="inputCustomerName" class="form-control" {% if form.first_name.value %}value="{{form.first_name.value}}" {% endif %} placeholder="Nombre del punto de venta" required autofocus>
+    
+    <label for="inputEmail" class="sr-only">Usuario del POS</label>
+    <input type="text" name="{{form.username.html_name}}" id="inputEmail" class="form-control" {% if form.username.value %} value="{{form.username.value}}" {% endif %} placeholder="Usuario del POS" required autofocus>
+    
+    {% csrf_token %}
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Enviar</button>
+  </form>
+
+  </div>
+
+{% endblock %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+
+
+{% endblock %}
+
+{% block customjs %}
+
+<script>
+
+function cancelOrder(customerName, deleteUrl){
+    
+    document.getElementById('deleteName').textContent = customerName;
+    document.getElementById('deleteLink').href = deleteUrl;
+    $('#deleteModal').modal('show');
+}
+
+function payOrder(customerName, payUrl, orderPrice){
+    
+    document.getElementById('payName').textContent = customerName;
+    document.getElementById('payPrice').textContent = orderPrice;
+    document.getElementById('payLink').href = payUrl;
+    $('#payModal').modal('show');
+}
+
+</script>
+
+{% endblock %}
