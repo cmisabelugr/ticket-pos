@@ -77,7 +77,7 @@ function processResult(result){
                 alertElem = document.getElementById("mainAlert");
                 alertElem.className = "alert alert-warning"
                 alertElem.textContent = "Ticket no pagado. Desviar a taquilla";
-                window.location.href = "/door/office_pay/"+event_id+"/"+r+"/";
+                //window.location.href = "/door/office_pay/"+event_id+"/"+r+"/";
                 break;
 
             case "blankTicket":

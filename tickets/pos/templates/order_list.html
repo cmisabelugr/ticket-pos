@@ -17,6 +17,7 @@
       <th scope="col">Num entradas</th>
       <th scope="col">Pagado</th>
       <th scope="col">Cancelar</th>
+      <th scope="col">Descargar entradas</th>
     </tr>
   </thead>
   <tbody>
@@ -28,6 +29,7 @@
       <td>{{o.ticket_set.count}}</td>
       <td>{% if o.paid %}✔{% else %}<button type="button" onClick='payOrder("{{o.customer_name}}","{% url 'pay_order' o.id %}","{{o.total_price}}")' class="btn btn-primary">Pagar</button>{% endif %}</td>
       <td>{% if o.paid %}{% else %}<button type="button" onClick='cancelOrder("{{o.customer_name}}","{% url 'cancel_order' o.id %}")' class="btn btn-danger">Cancelar</button>{% endif %}</td>
+      <td><a type="button" href="{% url 'download_tickets_order' o.id %}" class="btn btn-primary">Descargar</a></td>
     </tr>
     {% endfor %}
   </tbody>

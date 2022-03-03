@@ -7,6 +7,8 @@ from django.http import FileResponse
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
+from pdfrw import PdfWriter, PdfReader
+from io import BytesIO
 from .ticket_creator import *
 import json
 from django.views.decorators.clickjacking import xframe_options_exempt
@@ -330,6 +332,23 @@ def pos_order_cancel(req, order_id):
     except:
         return HttpResponse("Bad Request")
     pass
+
+def pos_order_download_tickets(req, order_id):
+    try:
+        o = Order.objects.get(id=order_id)
+        tickets = o.ticket_set.all()
+        result = PdfWriter()
+        for t in tickets.all():
+            if t.order:
+                result.addPage(PdfReader(generate_ticket_complete(t.id, t.qr_text, t.order.event.datetime.day)).pages[0])
+            else:
+                result.addPage(PdfReader(generate_ticket(t.id, t.qr_text)).pages[0])
+        file = BytesIO()
+        result.write(file)
+        file.seek(0)
+        return FileResponse(file, as_attachment=True, filename='entradas_pedido_{}.pdf'.format(order_id))
+    except:
+        return HttpResponse("Bad Request")
 
 @login_required
 def pos_order_pay(req, order_id):
