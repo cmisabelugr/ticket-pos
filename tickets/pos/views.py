@@ -288,6 +288,19 @@ def pos_api_activate(req, order_id):
         return HttpResponseBadRequest("Try again, invalid request")
 
 @login_required
+def pos_tickets_generate_api(req):
+    t = Ticket()
+    t.save()
+    result = {
+        'status' : "ok",
+        'serial' : t.id,
+        'qr_text' : t.qr_text
+    }
+
+    return HttpResponse(json.dumps(result))
+    pass
+
+@login_required
 def pos_order_info(req, order_id):
     o = Order.objects.get(id=order_id)
     e = o.event
@@ -333,6 +346,7 @@ def pos_order_cancel(req, order_id):
         return HttpResponse("Bad Request")
     pass
 
+@login_required
 def pos_order_download_tickets(req, order_id):
     try:
         o = Order.objects.get(id=order_id)
