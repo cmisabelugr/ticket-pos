@@ -90,6 +90,13 @@ class Seat(models.Model):
 
     def is_occupied(self, e):
         return self.ticket_set.filter(order__event=e).exists()
+    
+    def res_order(self, e):
+        if self.is_occupied(e):
+            return self.ticket_set.filter(order__event=e).first().order
+        else:
+            return None
+    
 
     class Meta:
         unique_together = ['venue', 'row', 'column']

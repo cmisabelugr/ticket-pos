@@ -25,7 +25,7 @@
         {% else %}
         <td class="tg-0lax">
             {% if seat.status == "Blocked" %}
-            <img id='{{seat.local_code}}' src='{% static 'img/booked.png' %}' /></td>
+            <img id='{{seat.local_code}}' {% if user.is_staff %} title="{{seat.order.customer_name}} - By {{seat.order.creator}}" {% endif %} src='{% static 'img/booked.png' %}' /></td>
             {% elif seat.status == "Free"%}
             <img id='{{seat.local_code}}' src='{% static 'img/none.png' %}' /></td>
             {% elif seat.status == "Yours"%}

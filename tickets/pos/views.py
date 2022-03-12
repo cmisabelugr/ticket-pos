@@ -114,10 +114,12 @@ def pos_seat_selection(req, id):
             render_row.append("E")
         for s in row[0]:
             s.status = is_prerreserved(s, e, req)
+            s.order = s.res_order(e)
             render_row.append(s)
         render_row.append("A")
         for s in row[1]:
             s.status = is_prerreserved(s, e, req)
+            s.order = s.res_order(e)
             render_row.append(s)
         for i in range(max_even-len(row[1])):
             render_row.append("E")
@@ -133,7 +135,8 @@ def pos_seat_selection(req, id):
         'username': req.user.first_name,
         'num_columns' : num_columns,
         'num_rows' : num_rows,
-        'seat_map' : seat_map_render
+        'seat_map' : seat_map_render,
+        'user' : req.user
     }
 
     return render(req, "seat_map.html", context=context)
