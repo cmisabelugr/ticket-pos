@@ -18,10 +18,13 @@ System for selling and checking theatre tickets. With seats reservation included
 ## Screenshots (in spanish)
 
 ![POS Home](docs/pos_home.png)
+
 POS Home. Active events selection
 ![Seat map](docs/seat_selection.png)
+
 Seat selection with live changes for multiple POS
 ![Orders list](docs/pos_orders.png)
+
 POS orders list, with ability to download tickets or mark as paid.
 ![Ticket scan](docs/ticket_scan.png)
 
