@@ -44,4 +44,4 @@ If customers scan their ticket they can see their booked seats.
 For production use change settings to a "real" SQL server (MariaDB or PostgreSQL) and follow instructions on how to deploy with supervisord from [Django channels docs](https://channels.readthedocs.io/en/stable/deploying.html)
 
 ## Disclaimer
-This project was made by [@jscoba](github.com/jscoba) for CM Isabel la Católica of University of Granada and is provided as-is. Feel free to fork or open an issue if you want to contribute or ask something.
+This project was made by [@jscoba](https://github.com/jscoba) for CM Isabel la Católica of University of Granada and is provided as-is. Feel free to fork or open an issue if you want to contribute or ask something.
